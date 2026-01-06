@@ -121,7 +121,6 @@ export const registerWithGoogle = async (req, res) => {
     res.cookie("token", userToken, {
   httpOnly: true,
   sameSite: "none",
-  domain: "https://agastiveda.vercel.app", // 🔥 REQUIRED FOR BRAVE
   maxAge: 7 * 24 * 60 * 60 * 1000,
 });
 
