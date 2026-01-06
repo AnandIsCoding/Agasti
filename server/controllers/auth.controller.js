@@ -120,9 +120,8 @@ export const registerWithGoogle = async (req, res) => {
     // assign token in cookie
     res.cookie("token", userToken, {
   httpOnly: true,
-  secure: true,
   sameSite: "none",
-  domain: ".vercel.app", // 🔥 REQUIRED FOR BRAVE
+  domain: "https://agastiveda.vercel.app", // 🔥 REQUIRED FOR BRAVE
   maxAge: 7 * 24 * 60 * 60 * 1000,
 });
 
