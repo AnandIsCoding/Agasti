@@ -9,7 +9,7 @@ function PageTitleUpdater() {
 
     let title = "Pluto Intero | Affordable Home Decor in India"; // default title
 
-    if (path === "/") title = "Home | Pluto Intero - Affordable Home Decor";
+    if (path === "/") title = "Home | Agasti Veda - Best Ayurvedic Products Seller in India";
     else if (path.startsWith("/auth")) title = "Login / Signup | Pluto Intero";
     else if (path.startsWith("/terms-condition"))
       title = "Terms & Conditions | Pluto Intero";
