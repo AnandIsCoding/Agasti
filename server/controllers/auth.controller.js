@@ -122,7 +122,6 @@ export const registerWithGoogle = async (req, res) => {
       httpOnly: true,
       sameSite: "none",
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-      secure: NODE_ENV === "production",
     });
     // send registration mail to new user
     try {
@@ -200,7 +199,6 @@ export const userLogout = async (req, res) => {
      res.cookie("token", "", {
     httpOnly: true,
     sameSite: "none",
-    secure: true,
     expires: new Date(0),
   });
     return res
