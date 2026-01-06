@@ -6,6 +6,7 @@ import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 import Navigation from "../components/navigation/Navigation";
 import GoogleLoginComponent from "../utils/GoogleLoginComponent";
+import { companyName } from "../utils/owner";
 
 export default function Auth() {
   return (
@@ -21,7 +22,7 @@ export default function Auth() {
           className="w-full max-w-md"
         >
           <h1 className="text-3xl font-semibold text-center mb-2">
-            Welcome to Pluto Intero
+            Welcome to {companyName}
           </h1>
 
           <p className="text-center text-gray-500 mb-8">
