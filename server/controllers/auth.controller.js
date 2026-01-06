@@ -119,11 +119,13 @@ export const registerWithGoogle = async (req, res) => {
     });
     // assign token in cookie
     res.cookie("token", userToken, {
-      httpOnly: true,
-      sameSite: "none",
-      secure: NODE_ENV === "Production" ? true : false,
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    });
+  httpOnly: true,
+  secure: true,
+  sameSite: "none",
+  domain: ".vercel.app", // 🔥 REQUIRED FOR BRAVE
+  maxAge: 7 * 24 * 60 * 60 * 1000,
+});
+
     // send registration mail to new user
     try {
       if (!userExists) {
