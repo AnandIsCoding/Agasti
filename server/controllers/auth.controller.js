@@ -115,13 +115,15 @@ export const registerWithGoogle = async (req, res) => {
     }
     // generate token
     const userToken = jwt.sign({ _id: user._id }, SECRET_KEY, {
-      expiresIn: "15d",
+      expiresIn: "7d",
     });
     // assign token in cookie
     res.cookie("token", userToken, {
   httpOnly: true,
-  sameSite: "none",
-  maxAge: 7 * 24 * 60 * 60 * 1000,
+  secure: NODE_ENV === "production",
+   sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+     maxAge: 7 * 24 * 60 * 60 * 1000,
+
 });
 
     // send registration mail to new user
