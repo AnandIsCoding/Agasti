@@ -120,7 +120,7 @@ export const registerWithGoogle = async (req, res) => {
     // assign token in cookie
     res.cookie("token", userToken, {
       httpOnly: true,
-      sameSite: "strict",
+      sameSite: "none",
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       secure: NODE_ENV === "production",
     });
