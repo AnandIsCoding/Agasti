@@ -1,51 +1,76 @@
 import chalk from "chalk";
-import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
-
 import User from "../models/user.model.js";
 import { SECRET_KEY } from "../configs/server.config.js";
 import { StatusCodes } from "http-status-codes";
 
-dotenv.config();
+/* ================= AUTH MIDDLEWARE ================= */
 
 export const isAuthenticated = async (req, res, next) => {
   try {
-    const token =
-      req.cookies?.token || req.headers.authorization?.split(" ")[1];
+    const token = req.cookies?.token;
 
     if (!token) {
+      console.log(
+        chalk.yellow("⚠️ Auth failed: No token found in cookies")
+      );
+
       return res.status(StatusCodes.UNAUTHORIZED).json({
         success: false,
         message: "Authentication required",
       });
     }
 
-    const decoded = jwt.verify(token, SECRET_KEY);
+    let decoded;
+    try {
+      decoded = jwt.verify(token, SECRET_KEY);
+    } catch (err) {
+      console.log(
+        chalk.red("❌ JWT verification failed →"),
+        err.message
+      );
 
-    const user = await User.findById(decoded._id).select("-password -googleId");
-
-    if (!user) {
       return res.status(StatusCodes.UNAUTHORIZED).json({
         success: false,
-        message: "Invalid token",
+        message:
+          err.name === "TokenExpiredError"
+            ? "Session expired, please login again"
+            : "Invalid authentication token",
+      });
+    }
+
+    const user = await User.findById(decoded._id).select(
+      "-password -googleId"
+    );
+
+    if (!user) {
+      console.log(
+        chalk.red("❌ Auth failed: User not found for token")
+      );
+
+      return res.status(StatusCodes.UNAUTHORIZED).json({
+        success: false,
+        message: "Invalid authentication token",
       });
     }
 
     req.user = user;
     next();
   } catch (error) {
-    console.error(chalk.red("Auth error in isAuthenticated →"), error.message);
+    console.error(
+      chalk.bgRedBright("🔥 Auth middleware error →"),
+      error
+    );
 
-    return res.status(StatusCodes.UNAUTHORIZED).json({
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       success: false,
-      message: "Token expired or invalid",
+      message: "Authentication failed",
     });
   }
 };
 
-/**
- * @description Allow only ADMIN users
- */
+/* ================= ADMIN GUARD ================= */
+
 export const isAdmin = (req, res, next) => {
   try {
     if (!req.user) {
@@ -55,8 +80,8 @@ export const isAdmin = (req, res, next) => {
       });
     }
 
-    if (req?.user?.role !== "ADMIN") {
-      return res.status(StatusCodes.UNAUTHORIZED).json({
+    if (req.user.role !== "ADMIN") {
+      return res.status(StatusCodes.FORBIDDEN).json({
         success: false,
         message: "Access denied: Admins only",
       });
@@ -64,9 +89,14 @@ export const isAdmin = (req, res, next) => {
 
     next();
   } catch (error) {
+    console.error(
+      chalk.bgRedBright("🔥 Admin auth error →"),
+      error
+    );
+
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       success: false,
-      message: "Authorization error",
+      message: "Authorization failed",
     });
   }
 };
